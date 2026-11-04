@@ -1,6 +1,7 @@
 using Api.Features.Students;
 using Api.Features.Courses;
 using Api.Features.Admissions;
+using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Features.Students.CreateStudent;
@@ -13,6 +14,7 @@ using Application.Features.Admissions.CreateAdmission;
 using Application.Features.Admissions.GetAdmissionById;
 using Domain.Common;
 using FluentValidation;
+using Infrastructure.Authentication;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -35,6 +37,7 @@ builder.Services.AddScoped<IQueryHandler<GetAllCoursesQuery, Result<GetAllCourse
 builder.Services.AddScoped<IQueryHandler<GetCourseByIdQuery, Result<GetCourseByIdResponse>>, GetCourseByIdQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateAdmissionCommand, Result<CreateAdmissionResponse>>, CreateAdmissionCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAdmissionByIdQuery, Result<GetAdmissionByIdResponse>>, GetAdmissionByIdQueryHandler>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 // API
 builder.Services.AddEndpointsApiExplorer();
