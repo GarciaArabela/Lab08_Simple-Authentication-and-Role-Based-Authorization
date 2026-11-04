@@ -39,6 +39,11 @@ public class Result
 
 public record Error(string Code, string Message)
 {
+    public static Error Conflict(string v1, string v2)
+    {
+        throw new NotImplementedException();
+    }
+
     public static Error NotFound(string code, string message) => new(code, message);
     public static Error Validation(string code, string message) => new(code, message);
 }
