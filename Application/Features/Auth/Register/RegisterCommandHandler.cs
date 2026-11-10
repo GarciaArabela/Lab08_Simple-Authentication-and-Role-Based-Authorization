@@ -10,26 +10,29 @@ using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 public sealed class RegisterCommandHandler(
-IAppDbContext dbContext,
-IPasswordHasher passwordHasher)
-: ICommandHandler<RegisterCommand, Result<RegisterResponse>>
+    IAppDbContext dbContext,
+    IPasswordHasher passwordHasher)
+    : ICommandHandler<RegisterCommand, Result<RegisterResponse>>
 {
     public async Task<Result<RegisterResponse>> HandleAsync(
-    RegisterCommand command,
-    CancellationToken cancellationToken = default)
+        RegisterCommand command,
+        CancellationToken cancellationToken = default)
     {
         var email = command.Email.Trim().ToLowerInvariant();
+
         var exists = await dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken);
         if (exists)
         {
             return Result<RegisterResponse>.Failure(Error.Conflict(
-            "Auth.EmailAlreadyRegistered",
-            "An account with this email address already exists."));
+                "Auth.EmailAlreadyRegistered",
+                "An account with this email address already exists."));
         }
+
         // Unrecognized or omitted Role defaults to Student
         var role = Enum.TryParse<UserRole>(command.Role, ignoreCase: true, out var parsedRole)
-        ? parsedRole
-        : UserRole.Student;
+            ? parsedRole
+            : UserRole.Student;
+
         var user = new ApplicationUser
         {
             Id = Guid.NewGuid(),
@@ -40,15 +43,18 @@ IPasswordHasher passwordHasher)
             Role = role,
             IsActive = true
         };
-    var student = await dbContext.Students
-    .FirstOrDefaultAsync(s => s.Email == email, cancellationToken);
+
+        var student = await dbContext.Students
+            .FirstOrDefaultAsync(s => s.Email == email, cancellationToken);
         if (student is not null)
         {
             user.StudentId = student.Id;
         }
+
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync(cancellationToken);
+
         return Result<RegisterResponse>.Success(new RegisterResponse(
-        user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString()));
+            user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString()));
     }
 }

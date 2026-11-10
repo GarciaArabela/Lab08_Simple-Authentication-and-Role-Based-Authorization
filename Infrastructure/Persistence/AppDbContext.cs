@@ -14,6 +14,8 @@ public sealed class AppDbContext : DbContext, IAppDbContext
     public DbSet<AdmissionCourse> AdmissionCourses => Set<AdmissionCourse>();
     public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
 
+    public DbSet<RevokedToken> RevokedTokens => Set<RevokedToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Student>(entity =>

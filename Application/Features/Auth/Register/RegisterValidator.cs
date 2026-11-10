@@ -1,6 +1,7 @@
 ﻿namespace Application.Features.Auth.Register;
 
 using FluentValidation;
+
 public sealed class RegisterValidator : AbstractValidator<RegisterCommand>
 {
     public RegisterValidator()
@@ -10,7 +11,7 @@ public sealed class RegisterValidator : AbstractValidator<RegisterCommand>
         RuleFor(x => x.FirstName).NotEmpty();
         RuleFor(x => x.LastName).NotEmpty();
         RuleFor(x => x.Role)
-        .Must(r => r is null || Enum.TryParse<Domain.Enums.UserRole>(r, true, out _))
-        .WithMessage("Role must be Student, Instructor, Registrar, or Admin.");
+            .Must(r => r is null || Enum.TryParse<Domain.Enums.UserRole>(r, true, out _))
+            .WithMessage("Role must be Student, Instructor, Registrar, or Admin.");
     }
 }
