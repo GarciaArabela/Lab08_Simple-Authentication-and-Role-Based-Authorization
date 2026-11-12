@@ -1,16 +1,16 @@
-
-using Api.Features.Admissions;
 using Api.Features.Auth;
+using Api.Common.Authorization;
+using Api.Features.Admissions;
 using Api.Features.Courses;
 using Api.Features.Students;
-using Microsoft.AspNetCore.Authorization;
-using Api.Common.Authorization;
+using Application.Abstractions;
+using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Features.Admissions.CreateAdmission;
 using Application.Features.Admissions.GetAdmissionById;
-using Application.Features.Auth.Register;
 using Application.Features.Auth.Login;
+using Application.Features.Auth.Register;
 using Application.Features.Courses.CreateCourse;
 using Application.Features.Courses.GetAllCourses;
 using Application.Features.Courses.GetCourseById;
@@ -20,17 +20,17 @@ using Application.Features.Students.GetStudentById;
 using Domain.Common;
 using FluentValidation;
 using Infrastructure.Authentication;
+using Infrastructure.BackgroundJobs;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
-using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Application.Abstractions.Authentication;
-using Application.Abstractions;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -136,9 +136,9 @@ builder.Services.AddScoped<IQueryHandler<GetAllCoursesQuery, Result<GetAllCourse
 builder.Services.AddScoped<IQueryHandler<GetCourseByIdQuery, Result<GetCourseByIdResponse>>, GetCourseByIdQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateAdmissionCommand, Result<CreateAdmissionResponse>>, CreateAdmissionCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAdmissionByIdQuery, Result<GetAdmissionByIdResponse>>, GetAdmissionByIdQueryHandler>();
-builder.Services.AddScoped<ICommandHandler<RegisterCommand, Result<RegisterResponse>>, RegisterCommandHandler>();
+builder.Services.AddHostedService<RevokedTokenCleanupService>();
 builder.Services.AddScoped<ICommandHandler<LoginCommand, Result<LoginResponse>>, LoginCommandHandler>();
-
+builder.Services.AddScoped<ICommandHandler<RegisterCommand, Result<RegisterResponse>>, RegisterCommandHandler>();
 // API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi(options =>

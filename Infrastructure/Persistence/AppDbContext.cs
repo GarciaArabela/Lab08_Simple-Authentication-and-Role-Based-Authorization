@@ -66,5 +66,9 @@ public sealed class AppDbContext : DbContext, IAppDbContext
             .HasForeignKey(u => u.StudentId)
             .OnDelete(DeleteBehavior.SetNull);
         });
+        modelBuilder.Entity<RevokedToken>(entity =>
+        {
+            entity.HasKey(r => r.Jti);
+        });
     }
 }
