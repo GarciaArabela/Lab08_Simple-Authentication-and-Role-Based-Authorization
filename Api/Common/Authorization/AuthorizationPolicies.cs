@@ -2,8 +2,6 @@
 namespace Api.Common.Authorization;
 
 using Domain.Enums;
-using Microsoft.Extensions.DependencyInjection;
-
 public static class Policies
 {
     public const string CanManageCourses = nameof(CanManageCourses);
@@ -13,17 +11,17 @@ public static class Policies
 
 public static class AuthorizationSetup
 {
-    public static IServiceCollection AddAppAuthorization(
-        this IServiceCollection services)
+    public static IServiceCollection AddAppAuthorization(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy(Policies.CanManageCourses, policy =>
-                policy.RequireRole(nameof(UserRole.Registrar)))
-            .AddPolicy(Policies.CanManageStudents, policy =>
-                policy.RequireRole(nameof(UserRole.Registrar)))
-            .AddPolicy(Policies.CanManageAdmissions, policy =>
-                policy.RequireRole(nameof(UserRole.Registrar)));
-
+        .AddPolicy(Policies.CanManageCourses, policy =>
+        policy.RequireRole(nameof(UserRole.Registrar)))
+        .AddPolicy(Policies.CanManageStudents, policy =>
+        policy.RequireRole(nameof(UserRole.Registrar)))
+        .AddPolicy(Policies.CanManageAdmissions, policy =>
+        policy.RequireRole(nameof(UserRole.Registrar)));
+       
         return services;
+
     }
 }

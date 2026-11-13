@@ -1,3 +1,4 @@
+
 using Api.Features.Auth;
 using Api.Common.Authorization;
 using Api.Features.Admissions;
@@ -9,8 +10,6 @@ using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Features.Admissions.CreateAdmission;
 using Application.Features.Admissions.GetAdmissionById;
-using Application.Features.Auth.Login;
-using Application.Features.Auth.Register;
 using Application.Features.Courses.CreateCourse;
 using Application.Features.Courses.GetAllCourses;
 using Application.Features.Courses.GetCourseById;
@@ -31,8 +30,11 @@ using Scalar.AspNetCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Features.Auth.Login;
+using Application.Features.Auth.Register;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Database - SQLite
 builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options =>
@@ -139,6 +141,8 @@ builder.Services.AddScoped<IQueryHandler<GetAdmissionByIdQuery, Result<GetAdmiss
 builder.Services.AddHostedService<RevokedTokenCleanupService>();
 builder.Services.AddScoped<ICommandHandler<LoginCommand, Result<LoginResponse>>, LoginCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<RegisterCommand, Result<RegisterResponse>>, RegisterCommandHandler>();
+
+
 // API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi(options =>
@@ -179,23 +183,19 @@ await app.Services.MigrateAndSeedAsync();
 app.UseStatusCodePages(async context =>
 {
     var response = context.HttpContext.Response;
-
     if (response.StatusCode is StatusCodes.Status401Unauthorized
-                            or StatusCodes.Status403Forbidden)
+    or StatusCodes.Status403Forbidden)
     {
         response.ContentType = "application/problem+json";
-
-        await response.WriteAsJsonAsync(
-            new Microsoft.AspNetCore.Mvc.ProblemDetails
-            {
-                Status = response.StatusCode,
-                Title = response.StatusCode == StatusCodes.Status401Unauthorized
-                    ? "Unauthorized"
-                    : "Forbidden",
-                Detail = response.StatusCode == StatusCodes.Status401Unauthorized
-                    ? "Authentication is required to access this resource."
-                    : "You do not have permission to perform this action."
-            });
+        await response.WriteAsJsonAsync(new Microsoft.AspNetCore.Mvc.ProblemDetails
+        {
+            Status = response.StatusCode,
+            Title = response.StatusCode == StatusCodes.Status401Unauthorized
+        ? "Unauthorized" : "Forbidden",
+            Detail = response.StatusCode == StatusCodes.Status401Unauthorized
+        ? "Authentication is required to access this resource."
+        : "You do not have permission to perform this action."
+        });
     }
 });
 

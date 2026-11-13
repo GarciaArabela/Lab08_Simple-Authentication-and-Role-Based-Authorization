@@ -5,22 +5,26 @@ using Application.Abstractions.Messaging;
 using Application.Features.Admissions.CreateAdmission;
 using Application.Features.Admissions.GetAdmissionById;
 using Domain.Common;
+using Api.Common.Authorization;
 
 public static class AdmissionEndpoints
 {
     public static void MapAdmissionEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/admissions")
-            .WithTags("Admissions");
+            .WithTags("Admissions")
+            .RequireAuthorization();
 
         group.MapPost("/", Create)
             .WithName("CreateAdmission")
-            .WithSummary("Create a new admission with courses");
+            .WithSummary("Create a new admission with courses")
+            .RequireAuthorization(Policies.CanManageAdmissions);
 
         group.MapGet("/{id:guid}", GetById)
             .WithName("GetAdmissionById")
             .WithSummary("Get admission by ID with courses");
     }
+    
 
     private static async Task<IResult> Create(
         CreateAdmissionCommand command,

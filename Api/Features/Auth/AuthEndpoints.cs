@@ -5,14 +5,12 @@ using Api.Common.Extensions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Microsoft.AspNetCore.Routing;
-
-using Application.Features.Auth.Login;
-using Application.Features.Auth.Register;
 using Domain.Common;
 using Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-
+using Application.Features.Auth.Login;
+using Application.Features.Auth.Register;
 
 public static class AuthEndpoints
 {
